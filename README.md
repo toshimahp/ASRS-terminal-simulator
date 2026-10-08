@@ -398,7 +398,7 @@ The interactive shell is verified separately with scripted full-program replays 
 <a id="future-extension"></a>
 ## 🔮 Possible future extension
 
-The simulator is intentionally ephemeral — a fresh `python main.py` always starts from two empty racks, exactly as the PRD specifies. A natural extension (currently out of scope) would be optional **state persistence** via a small SQLite layer (`python main.py warehouse.db`): two tables (`trays`, plus a key/value `state` table for the clock, robot position, and next id), populated with basic `CREATE TABLE / INSERT / SELECT / UPDATE / DELETE` only. The functional core would remain untouched — persistence would be a third, purely imperative module beside `main.py` — and it would let demos jump straight to interesting warehouse states instead of waiting through a 186-second fill. Whether to build it is pending a decision on scope.
+The simulator is intentionally ephemeral — a fresh `python code/main.py` always starts from two empty racks, exactly as the PRD specifies. A natural extension (currently out of scope) would be optional **state persistence** via a small SQLite layer (`python code/main.py warehouse.db`): two tables (`trays`, plus a key/value `state` table for the clock, robot position, and next id), populated with basic `CREATE TABLE / INSERT / SELECT / UPDATE / DELETE` only. The functional core would remain untouched — persistence would be a third, purely imperative module beside `main.py` — and it would let demos jump straight to interesting warehouse states instead of waiting through a 186-second fill. Whether to build it is pending a decision on scope.
 
 <p align="right"><a href="#top">back to top ⬆️</a></p>
 

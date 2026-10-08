@@ -52,10 +52,10 @@
 
 ```bash
 # run the simulator
-python main.py
+python code/main.py
 
 # run the test suite (39 tests)
-python test_asrs.py
+python code/test_asrs.py
 # or: python -m unittest test_asrs.py -v
 ```
 

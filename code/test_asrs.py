@@ -3,7 +3,8 @@ test_asrs.py -- unit tests for the ASRS Terminal Simulator.
 
 These tests cover the PURE logic in asrs_logic.py. We do NOT test main.py
 here because main.py is the input/output shell (it talks to the user and
-the clock), which we test by running the program manually.
+the clock), which we test by running the program manually or with scripted
+input.
 
 Run with:
     python -m unittest test_asrs.py -v
@@ -19,6 +20,7 @@ from asrs_logic import (
     is_valid_choice, is_valid_amount,
     get_qty_after_increase, get_qty_after_reduce,
     distance, build_path, find_nearest_empty_slot,
+    find_tray_location,
     build_admin_view, build_station_tray_view, build_movement_header,
     count_empty_slots,
 )
@@ -131,6 +133,7 @@ class TestBuildPath(unittest.TestCase):
 class TestFindNearestEmptySlot(unittest.TestCase):
     def test_fresh_warehouse_picks_nearest_with_tie_break(self):
         racks = make_racks()
+
         # Robot at station Side 0 (3,0). Nearest empty slots are (2,0) and
         # (3,1), both 1 step away. Scan order visits row 2 before row 3,
         # so (0,2,0) wins the tie.
@@ -140,32 +143,58 @@ class TestFindNearestEmptySlot(unittest.TestCase):
     def test_skips_occupied_cells(self):
         racks = make_racks()
         racks[0][2][0] = Tray(1, 101, 25)  # block (0,2,0)
+
         slot = find_nearest_empty_slot(racks, 0, 3, 0, N)
+
         # Now the nearest remaining slot is (0,3,1), 1 step away.
         self.assertEqual(slot, (0, 3, 1))
 
     def test_never_returns_station_cell(self):
         racks = make_racks()
         slot = find_nearest_empty_slot(racks, 0, 3, 0, N)
+
         self.assertIsNotNone(slot)
+
         side, row, col = slot
         self.assertFalse(row == N - 1 and col == 0)
 
     def test_full_warehouse_returns_none(self):
         racks = make_racks()
+
         for side in (0, 1):
             for row in range(N):
                 for col in range(N):
                     if row == N - 1 and col == 0:
                         continue  # leave the station cells empty
                     racks[side][row][col] = Tray(1, 101, 1)
+
         slot = find_nearest_empty_slot(racks, 0, 3, 0, N)
         self.assertIsNone(slot)
+
+
+class TestFindTrayLocation(unittest.TestCase):
+    def test_finds_stored_tray(self):
+        racks = make_racks()
+        racks[1][2][3] = Tray(7, 101, 25)
+
+        self.assertEqual(find_tray_location(racks, 7), (1, 2, 3))
+
+    def test_missing_id_returns_none(self):
+        racks = make_racks()
+        racks[1][2][3] = Tray(7, 101, 25)
+
+        self.assertIsNone(find_tray_location(racks, 99))
+
+    def test_fresh_warehouse_returns_none(self):
+        racks = make_racks()
+
+        self.assertIsNone(find_tray_location(racks, 1))
 
 
 class TestCountEmptySlots(unittest.TestCase):
     def test_fresh_side_has_15_storage_slots(self):
         racks = make_racks()
+
         # 16 cells minus the station = 15 usable storage slots.
         self.assertEqual(count_empty_slots(racks, 0, N), 15)
         self.assertEqual(count_empty_slots(racks, 1, N), 15)
@@ -173,6 +202,7 @@ class TestCountEmptySlots(unittest.TestCase):
     def test_occupied_slot_not_counted(self):
         racks = make_racks()
         racks[0][0][0] = Tray(1, 101, 25)
+
         self.assertEqual(count_empty_slots(racks, 0, N), 14)
 
 
@@ -180,20 +210,25 @@ class TestMovementHeader(unittest.TestCase):
     def test_counts_only_moves_not_turns(self):
         # 6 moves, no turn -> 6 seconds.
         path = [IN, IN, IN, UP, UP, UP]
-        self.assertEqual(build_movement_header(path),
-                         "Robot is moving... please wait (6 sec)")
+        self.assertEqual(
+            build_movement_header(path),
+            "Robot is moving... please wait (6 sec)"
+        )
 
     def test_turn_adds_no_time_when_turn_sec_is_zero(self):
         # 5 moves + 1 turn (TURN_SEC=0) -> 5 seconds.
         path = [OUT, OUT, TURN, IN, IN, IN]
-        self.assertEqual(build_movement_header(path),
-                         "Robot is moving... please wait (5 sec)")
+        self.assertEqual(
+            build_movement_header(path),
+            "Robot is moving... please wait (5 sec)"
+        )
 
 
 class TestStationTrayView(unittest.TestCase):
     def test_shows_tray_details(self):
         tray = Tray(7, 101, 25)
         view = build_station_tray_view(tray, TRAY_CAPACITY)
+
         self.assertIn("Tray ID: 7", view)
         self.assertIn("Item ID: 101", view)
         self.assertIn("Qty: 25 / 50", view)
@@ -201,15 +236,20 @@ class TestStationTrayView(unittest.TestCase):
     def test_blank_item_id_when_none(self):
         tray = Tray(7, None, 0)
         view = build_station_tray_view(tray, TRAY_CAPACITY)
-        self.assertIn("Item ID: \n", view)
+
+        self.assertIn("Item ID:\n", view)
+        self.assertIn("Qty: 0 / 50", view)
 
 
 class TestAdminView(unittest.TestCase):
     def test_contains_key_parts(self):
         racks = make_racks()
         racks[0][0][0] = Tray(1, 101, 25)
+
         robot = {"side": 0, "row": N - 1, "col": 0, "carrying": None}
+
         view = build_admin_view(racks, robot, 34, N)
+
         self.assertIn("WAREHOUSE MAP", view)
         self.assertIn("T1:I101(q25)", view)
         self.assertIn("STATION", view)
@@ -220,8 +260,36 @@ class TestAdminView(unittest.TestCase):
     def test_reports_carrying_tray(self):
         racks = make_racks()
         robot = {"side": 0, "row": N - 1, "col": 0, "carrying": Tray(9, 101, 5)}
+
         view = build_admin_view(racks, robot, 0, N)
+
         self.assertIn("carrying: tray 9", view)
+
+    def test_counts_use_usable_denominators(self):
+        racks = make_racks()
+        robot = {"side": 0, "row": N - 1, "col": 0, "carrying": None}
+
+        view = build_admin_view(racks, robot, 0, N)
+
+        self.assertIn("Side0: 15/15", view)
+        self.assertIn("Side1: 15/15", view)
+        self.assertIn("total 30/30", view)
+
+    def test_columns_stay_apart_with_long_ids(self):
+        racks = make_racks()
+        racks[0][0][0] = Tray(123456789, 987654321, 50)
+
+        robot = {"side": 0, "row": N - 1, "col": 0, "carrying": None}
+
+        view = build_admin_view(racks, robot, 0, N)
+
+        long_cell = "T123456789:I987654321(q50)"
+
+        self.assertIn(long_cell, view)
+
+        # Because the column width is measured from the longest rendered cell,
+        # there should be at least one padding space after the long cell.
+        self.assertIn(long_cell + " ", view)
 
 
 if __name__ == "__main__":

@@ -69,13 +69,13 @@ python test_asrs.py
 
 ```
 ASRS-terminal-simulator-main/
-├── main.py            # the imperative shell: all state, input, printing, sleeping
-├── asrs_logic.py      # the functional core: pure functions + the Tray class
-├── test_asrs.py       # 39 unit tests for the core (stdlib unittest)
+├── code/main.py            # the imperative shell: all state, input, printing, sleeping
+├── code/asrs_logic.py      # the functional core: pure functions + the Tray class
+├── code/test_asrs.py       # 39 unit tests for the core (stdlib unittest)
 ├── README.md          # this file
 ├── docs/
-│   ├── PRD.md         # product requirements (also delivered as PDF)
-│   └── Design_Document.md   # design document (also delivered as PDF)
+│   ├── docs/PRD.md         # product requirements (also delivered as PDF)
+│   └── docs/Design_Document.md   # design document (also delivered as PDF)
 └── diagrams/          # PNG figures referenced by this README
     ├── banner.png
     ├── warehouse_layout.png

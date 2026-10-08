@@ -69,14 +69,15 @@ python code/test_asrs.py
 
 ```
 ASRS-terminal-simulator-main/
-├── main.py            # the imperative shell: all state, input, printing, sleeping
-├── asrs_logic.py      # the functional core: pure functions + the Tray class
-├── test_asrs.py       # 39 unit tests for the core (stdlib unittest)
-├── README.md          # this file
+├── code/
+│   ├── main.py
+│   ├── asrs_logic.py
+│   └── test_asrs.py
+├── README.md
 ├── docs/
-│   ├── PRD.md         # product requirements (also delivered as PDF)
-│   └── Design_Document.md   # design document (also delivered as PDF)
-└── diagrams/          # PNG figures referenced by this README
+│   ├── PRD.md
+│   └── Design_Document.md
+└── diagrams/
     ├── banner.png
     ├── warehouse_layout.png
     ├── architecture.png
@@ -251,7 +252,7 @@ typical use condensed into one transcript (movement sleeps trimmed for print; ea
 line appears one second apart in a real run):
 
 ```text
-$ python main.py
+$ python code/main.py
 --------------------------------
 ASRS TERMINAL SIMULATOR
 --------------------------------
@@ -346,7 +347,7 @@ Goodbye!
 ## 🧪 Testing
 
 ```bash
-$ python test_asrs.py
+$ python code/test_asrs.py
 ...
 ----------------------------------------------------------------------
 Ran 39 tests in 0.002s

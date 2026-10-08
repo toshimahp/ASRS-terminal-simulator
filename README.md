@@ -18,7 +18,7 @@
     <img alt="architecture" src="https://img.shields.io/badge/architecture-functional%20core%20%2B%20imperative%20shell-blue?style=flat-square">
   </p>
 
-  <p><sub><strong>2</strong> source files · <strong>39</strong> unit tests · <strong>6</strong> diagrams ·
+  <p><sub><strong>3</strong> source files · <strong>39</strong> unit tests · <strong>6</strong> diagrams ·
   <strong>10</strong> documented edge cases · <strong>0</strong> possible tracebacks</sub></p>
 </div>
 
@@ -388,6 +388,11 @@ The interactive shell is verified separately with scripted full-program replays 
 
 <a id="documentation"></a>
 ## 📚 Documentation
+
+
+- [`main.py`](code/main.py) — the main program and user interface.
+- [`asrs_logic.py`](code/asrs_logic.py) — the functional logic of the simulator.
+- [`test_asrs.py`](code/test_asrs.py) — the 39 unit tests.
 
 - [`docs/PRD.md`](docs/PRD.md) — product requirements: interface, FR 1–3, edge cases EC 1–10, and the test-case table *(delivered as `PRD.pdf` alongside this repo)*.
 - [`docs/Design_Document.md`](docs/Design_Document.md) — terminology and formulae, file organization, program flow, function signatures, and function-level algorithms *(delivered as `Design_Document.pdf`)*.

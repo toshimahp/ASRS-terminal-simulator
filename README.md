@@ -56,7 +56,7 @@ python code/main.py
 
 # run the test suite (39 tests)
 python code/test_asrs.py
-# or: python -m unittest test_asrs.py -v
+# or: python -m unittest code/test_asrs.py -v
 ```
 
 > No installation, no virtual environment, no third-party packages.
@@ -69,13 +69,13 @@ python code/test_asrs.py
 
 ```
 ASRS-terminal-simulator-main/
-├── code/main.py            # the imperative shell: all state, input, printing, sleeping
-├── code/asrs_logic.py      # the functional core: pure functions + the Tray class
-├── code/test_asrs.py       # 39 unit tests for the core (stdlib unittest)
+├── main.py            # the imperative shell: all state, input, printing, sleeping
+├── asrs_logic.py      # the functional core: pure functions + the Tray class
+├── test_asrs.py       # 39 unit tests for the core (stdlib unittest)
 ├── README.md          # this file
 ├── docs/
-│   ├── docs/PRD.md         # product requirements (also delivered as PDF)
-│   └── docs/Design_Document.md   # design document (also delivered as PDF)
+│   ├── PRD.md         # product requirements (also delivered as PDF)
+│   └── Design_Document.md   # design document (also delivered as PDF)
 └── diagrams/          # PNG figures referenced by this README
     ├── banner.png
     ├── warehouse_layout.png
